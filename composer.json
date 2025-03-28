@@ -1,0 +1,23 @@
+{
+    "name": "benfex/kipay",
+    "description": "A custom payment gateway built on Paystack API",
+    "type": "project",
+    "require": {
+        "php": ">=7.4",
+        "yabacon/paystack-php": "^2.2",
+        "vlucas/phpdotenv": "^5.3",
+        "monolog/monolog": "^2.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "Kipay\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Amos Kiprotich",
+            "email": "admin@benfex.com"
+        }
+    ],
+    "minimum-stability": "stable"
+}

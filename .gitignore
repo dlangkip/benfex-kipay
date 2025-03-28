@@ -1,0 +1,9 @@
+.env
+vendor/
+logs/*
+!logs/.gitkeep
+.idea/
+.vscode/
+*.log
+*.cache
+node_modules/
