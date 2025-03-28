@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kipay Payment Gateway Documentation</title>
+    <style>
+        :root {
+            --primary-color: #3490dc;
+            --secondary-color: #6c757d;
+            --background-color: #f8f9fa;
+            --text-color: #212529;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--background-color);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            display: flex;
+        }
+
+        .sidebar {
+            width: 400px;
+            background-color: white;
+            padding: 20px;
+            border-right: 1px solid #e9ecef;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .content {
+            flex-grow: 1;
+            padding: 0 40px;
+            background-color: white;
+        }
+
+        .sidebar h2 {
+            margin-bottom: 20px;
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 10px;
+        }
+
+        .sidebar ul {
+            list-style-type: none;
+        }
+
+        .sidebar ul li {
+            margin-bottom: 10px;
+        }
+
+        .sidebar ul li a {
+            text-decoration: none;
+            color: var(--secondary-color);
+            transition: color 0.3s ease;
+        }
+
+        .sidebar ul li a:hover {
+            color: var(--primary-color);
+        }
+
+        h1, h2, h3 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+
+        .section {
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        pre {
+            background-color: #f4f4f4;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+
+        code {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.9em;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        table, th, td {
+            border: 1px solid #e9ecef;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f8f9fa;
+        }
+
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+
+        .alert-warning {
+            background-color: #fff3cd;
+            border-color: #ffeeba;
+            color: #856404;
+        }
+
+        .alert-info {
+            background-color: #d1ecf1;
+            border-color: #bee5eb;
+            color: #0c5460;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <h2>Kipay Documentation</h2>
+            <ul>
+                <li><a href="#overview">Overview</a></li>
+                <li><a href="#features">Features</a></li>
+                <li><a href="#requirements">Requirements</a></li>
+                <li><a href="#installation">Installation</a></li>
+                <li><a href="#configuration">Configuration</a></li>
+                <li><a href="#api-integration">API Integration</a>
+                    <ul>
+                        <li><a href="#transactions-api">Transactions API</a></li>
+                        <li><a href="#payment-channels-api">Payment Channels API</a></li>
+                        <li><a href="#customers-api">Customers API</a></li>
+                    </ul>
+                </li>
+                <li><a href="#webhooks">Webhooks</a></li>
+                <li><a href="#authentication">Authentication</a></li>
+                <li><a href="#security">Security</a></li>
+                <li><a href="#integration-guides">Integration Guides</a>
+                    <ul>
+                        <li><a href="#php-integration">PHP Integration</a></li>
+                        <li><a href="#mobile-integration">Mobile Integration</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+        <div class="content">
+            <section id="overview" class="section">
+                <h1>Kipay Payment Gateway</h1>
+                <p>Kipay is a flexible, extensible PHP-based payment gateway built on top of Paystack's API. It provides complete control over the payment flow while leveraging Paystack's established payment infrastructure in Africa.</p>
+            </section>
+
+            <section id="features" class="section">
+                <h2>Key Features</h2>
+                <ul>
+                    <li>Custom Payment Flow</li>
+                    <li>Multiple Payment Channels</li>
+                    <li>RESTful API</li>
+                    <li>Merchant Dashboard</li>
+                    <li>BENFEX Integration</li>
+                    <li>Transaction Management</li>
+                    <li>Customer Management</li>
+                    <li>Webhook Support</li>
+                    <li>Advanced Security</li>
+                </ul>
+            </section>
+
+            <section id="requirements" class="section">
+                <h2>System Requirements</h2>
+                <ul>
+                    <li>PHP 7.4 or higher</li>
+                    <li>MySQL 5.7 or higher</li>
+                    <li>Composer</li>
+                    <li>Apache/Nginx web server</li>
+                    <li>mod_rewrite enabled</li>
+                    <li>Required PHP Extensions:
+                        <ul>
+                            <li>PDO</li>
+                            <li>OpenSSL</li>
+                            <li>JSON</li>
+                            <li>cURL</li>
+                            <li>Mbstring</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <section id="installation" class="section">
+                <h2>Installation</h2>
+                <h3>Clone the Repository</h3>
+                <pre><code>git clone https://github.com/yourusername/kipay.git
+cd kipay</code></pre>
+
+                <h3>Install Dependencies</h3>
+                <pre><code>composer install --no-dev --optimize-autoloader</code></pre>
+
+                <h3>Configure Environment</h3>
+                <pre><code>cp .env.example .env</code></pre>
+
+                <div class="alert alert-warning">
+                    <strong>Important:</strong> Edit the `.env` file with your database and Paystack credentials.
+                </div>
+            </section>
+
+            <section id="configuration" class="section">
+                <h2>Configuration</h2>
+                <h3>Environment Variables</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Variable</th>
+                            <th>Description</th>
+                            <th>Example</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>DB_HOST</td>
+                            <td>Database Host</td>
+                            <td>localhost</td>
+                        </tr>
+                        <tr>
+                            <td>DB_NAME</td>
+                            <td>Database Name</td>
+                            <td>kipay_db</td>
+                        </tr>
+                        <tr>
+                            <td>PAYSTACK_SECRET_KEY</td>
+                            <td>Paystack Secret Key</td>
+                            <td>sk_test_xxxxxxxxxxxxxxxxxxxxx</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <section id="api-integration" class="section">
+                <h2>API Integration</h2>
+                <div class="alert alert-info">
+                    <strong>Authentication:</strong> All API requests require an API key in the header: <code>X-API-Key: your_api_key_here</code>
+                </div>
+
+                <h3 id="transactions-api">Transactions API</h3>
+                <h4>Initialize Transaction</h4>
+                <pre><code>POST /api/transactions/initialize
+{
+    "amount": 10000,
+    "email": "customer@example.com",
+    "payment_channel_id": 1,
+    "description": "Payment for Order #12345"
+}</code></pre>
+
+                <h3 id="payment-channels-api">Payment Channels API</h3>
+                <h4>Create Payment Channel</h4>
+                <pre><code>POST /api/payment-channels/create
+{
+    "name": "My Paystack Channel",
+    "provider": "paystack",
+    "config": {
+        "public_key": "pk_test_xxxxxxxxxxxxxxxxxxxxx",
+        "secret_key": "sk_test_xxxxxxxxxxxxxxxxxxxxx"
+    }
+}</code></pre>
+
+                <h3 id="customers-api">Customers API</h3>
+                <h4>Create Customer</h4>
+                <pre><code>POST /api/customers/create
+{
+    "email": "customer@example.com",
+    "first_name": "John",
+    "last_name": "Doe"
+}</code></pre>
+            </section>
+
+            <section id="webhooks" class="section">
+                <h2>Webhooks</h2>
+                <p>Kipay supports webhooks for various payment providers:</p>
+                <ul>
+                    <li><strong>Paystack:</strong> <code>/webhook/paystack</code></li>
+                    <li><strong>Flutterwave:</strong> <code>/webhook/flutterwave</code></li>
+                    <li><strong>Stripe:</strong> <code>/webhook/stripe</code></li>
+                </ul>
+
+                <div class="alert alert-warning">
+                    <strong>Security Note:</strong> Always verify webhook signatures to ensure authenticity.
+                </div>
+            </section>
+
+            <section id="authentication" class="section">
+                <h2>Authentication</h2>
+                <p>Kipay uses API keys for authentication. Generate and manage API keys in the admin dashboard.</p>
+                <pre><code>// Include API key in header
+X-API-Key: your_api_key_here</code></pre>
+            </section>
+
+            <section id="security" class="section">
+                <h2>Security Features</h2>
+                <ul>
+                    <li>Secure API authentication</li>
+                    <li>Password hashing with bcrypt</li>
+                    <li>Data encryption</li>
+                    <li>Comprehensive logging</li>
+                    <li>CSRF protection</li>
+                    <li>Input validation and sanitization</li>
+                </ul>
+            </section>
+
+            <section id="integration-guides" class="section">
+                <h2>Integration Guides</h2>
+                <h3 id="php-integration">PHP Integration Example</h3>
+                <pre><code>// Initialize transaction
+$transactionData = [
+    'amount' => 10000,
+    'email' => 'customer@example.com',
+    'payment_channel_id' => 1,
+    'description' => 'Payment for Order #12345'
+];
+
+$result = $kipayGateway->initializeTransaction($transactionData);
+
+// Redirect customer to payment page
+header('Location: ' . $result['authorization_url']);</code></pre>
+
+                <h3 id="mobile-integration">Mobile Integration</h3>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Platform</th>
+                                <th>Language</th>
+                                <th>Integration Method</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Android</td>
+                                <td>Kotlin</td>
+                                <td>OkHttp/HTTP Client</td>
+                            </tr>
+                            <tr>
+                                <td>iOS</td>
+                                <td>Swift</td>
+                                <td>URLSession</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+    </div>
+</body>
+</html>
