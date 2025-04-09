@@ -289,7 +289,7 @@
                             <div class="col-md-4 mb-3">
                                 <label for="fixed_fee" class="form-label">Fixed Fee</label>
                                 <div class="input-group">
-                                    <span class="input-group-text">NGN</span>
+                                    <span class="input-group-text">KSH</span>
                                     <input type="number" class="form-control" id="fixed_fee" name="fees_config[fixed_fee]" step="0.01" min="0">
                                 </div>
                             </div>
@@ -305,7 +305,7 @@
                             <div class="col-md-4 mb-3">
                                 <label for="fee_cap" class="form-label">Maximum Fee (Cap)</label>
                                 <div class="input-group">
-                                    <span class="input-group-text">NGN</span>
+                                    <span class="input-group-text">KSH</span>
                                     <input type="number" class="form-control" id="fee_cap" name="fees_config[cap]" step="0.01" min="0">
                                 </div>
                             </div>

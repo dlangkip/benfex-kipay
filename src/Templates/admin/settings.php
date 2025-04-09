@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Settings - Kipay Admin</title>
+    <title><?php echo htmlspecialchars($page_title); ?> - Kipay Admin</title>
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
     
     <!-- Custom CSS -->
     <link href="/assets/css/admin.css" rel="stylesheet">
@@ -18,75 +18,52 @@
     <link rel="icon" href="/assets/images/favicon.ico" type="image/x-icon">
 </head>
 <body>
-    <div class="wrapper">
-        <!-- Sidebar -->
-        <nav id="sidebar">
-            <div class="sidebar-header">
-                <h3>Kipay Admin</h3>
-                <img src="/assets/images/logo.png" alt="Kipay" class="logo">
-            </div>
+    <!-- Navigation -->
+    <?php include KIPAY_PATH . '/src/Templates/admin/partials/header.php'; ?>
 
-            <ul class="list-unstyled components">
-                <li>
-                    <a href="/admin"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
-                </li>
-                <li>
-                    <a href="/admin/transactions"><i class="fas fa-exchange-alt"></i> Transactions</a>
-                </li>
-                <li>
-                    <a href="/admin/payment-channels"><i class="fas fa-credit-card"></i> Payment Channels</a>
-                </li>
-                <li>
-                    <a href="/admin/customers"><i class="fas fa-users"></i> Customers</a>
-                </li>
-                <li class="active">
-                    <a href="/admin/settings"><i class="fas fa-cog"></i> Settings</a>
-                </li>
-                <li>
-                    <a href="/admin/profile"><i class="fas fa-user"></i> Profile</a>
-                </li>
-                <li>
-                    <a href="/admin/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
-                </li>
-            </ul>
-
-            <div class="sidebar-footer">
-                <p>Kipay Payment Gateway<br>Version 1.0.0</p>
-            </div>
-        </nav>
-
-        <!-- Page Content -->
-        <div id="content">
-            <!-- Top Navbar -->
-            <nav class="navbar navbar-expand-lg navbar-light bg-light">
-                <div class="container-fluid">
-                    <button type="button" id="sidebarCollapse" class="btn btn-primary">
-                        <i class="fas fa-bars"></i>
-                    </button>
-                    
-                    <div class="ms-auto d-flex align-items-center">
-                        <div class="dropdown">
-                            <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="fas fa-user"></i> <?php echo htmlspecialchars($user['username'] ?? 'Admin'); ?>
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
-                                <li><a class="dropdown-item" href="/admin/profile"><i class="fas fa-user-cog"></i> Profile</a></li>
-                                <li><a class="dropdown-item" href="/admin/logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
-                            </ul>
-                        </div>
-                    </div>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <?php include KIPAY_PATH . '/src/Templates/admin/partials/sidebar.php'; ?>
+            
+            <!-- Main Content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2"><?php echo htmlspecialchars($page_title); ?></h1>
                 </div>
-            </nav>
-
-            <!-- Settings Content -->
-            <div class="container-fluid">
-                <h1 class="mt-4 mb-4">Settings</h1>
+                
+                <?php if (isset($_SESSION['success_message'])): ?>
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <?php echo htmlspecialchars($_SESSION['success_message']); ?>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        <?php unset($_SESSION['success_message']); ?>
+                    </div>
+                <?php endif; ?>
+                
+                <?php if (isset($_SESSION['error_message'])): ?>
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <?php echo htmlspecialchars($_SESSION['error_message']); ?>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        <?php unset($_SESSION['error_message']); ?>
+                    </div>
+                <?php endif; ?>
+                
+                <?php if (isset($_SESSION['api_keys'])): ?>
+                    <div class="alert alert-info alert-dismissible fade show" role="alert">
+                        <h5><i class="fas fa-key"></i> New API Credentials Generated</h5>
+                        <p class="mb-1"><strong>API Key:</strong> <?php echo htmlspecialchars($_SESSION['api_keys']['api_key']); ?></p>
+                        <p><strong>API Secret:</strong> <?php echo htmlspecialchars($_SESSION['api_keys']['api_secret']); ?></p>
+                        <p class="text-danger mb-0"><strong>Important:</strong> Please copy these credentials now. The API Secret will not be shown again.</p>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        <?php unset($_SESSION['api_keys']); ?>
+                    </div>
+                <?php endif; ?>
                 
                 <!-- Settings Tabs -->
                 <ul class="nav nav-tabs mb-4" id="settingsTabs" role="tablist">
                     <li class="nav-item" role="presentation">
                         <button class="nav-link active" id="general-tab" data-bs-toggle="tab" data-bs-target="#general" type="button" role="tab" aria-controls="general" aria-selected="true">
-                            <i class="fas fa-sliders-h"></i> General
+                            <i class="fas fa-cog"></i> General
                         </button>
                     </li>
                     <li class="nav-item" role="presentation">
@@ -95,12 +72,12 @@
                         </button>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="email-tab" data-bs-toggle="tab" data-bs-target="#email" type="button" role="tab" aria-controls="email" aria-selected="false">
-                            <i class="fas fa-envelope"></i> Email
+                        <button class="nav-link" id="payment-tab" data-bs-toggle="tab" data-bs-target="#payment" type="button" role="tab" aria-controls="payment" aria-selected="false">
+                            <i class="fas fa-credit-card"></i> Payment
                         </button>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="notifications-tab" data-bs-toggle="tab" data-bs-target="#notifications" type="button" role="tab" aria-controls="notifications" aria-selected="false">
+                        <button class="nav-link" id="notification-tab" data-bs-toggle="tab" data-bs-target="#notification" type="button" role="tab" aria-controls="notification" aria-selected="false">
                             <i class="fas fa-bell"></i> Notifications
                         </button>
                     </li>
@@ -115,119 +92,140 @@
                                 <h6 class="m-0 font-weight-bold text-primary">General Settings</h6>
                             </div>
                             <div class="card-body">
-                                <form action="/admin/settings/update" method="post" class="needs-validation" novalidate>
-                                    <input type="hidden" name="section" value="general">
+                                <form action="/admin/settings/update" method="post" id="generalSettingsForm">
+                                    <input type="hidden" name="form_type" value="general_settings">
                                     
                                     <div class="mb-3">
                                         <label for="site_name" class="form-label">Site Name</label>
-                                        <input type="text" class="form-control" id="site_name" name="site_name" value="<?php echo htmlspecialchars($settings['site_name'] ?? 'Kipay Payment Gateway'); ?>" required>
-                                        <div class="invalid-feedback">
-                                            Please provide a site name.
-                                        </div>
+                                        <input type="text" class="form-control" id="site_name" name="setting_site_name" value="<?php echo htmlspecialchars($settings['site_name'] ?? 'Kipay Payment Gateway'); ?>">
                                     </div>
                                     
                                     <div class="mb-3">
                                         <label for="site_url" class="form-label">Site URL</label>
-                                        <input type="url" class="form-control" id="site_url" name="site_url" value="<?php echo htmlspecialchars($settings['site_url'] ?? 'http://localhost/kipay'); ?>" required>
-                                        <div class="invalid-feedback">
-                                            Please provide a valid URL.
+                                        <input type="url" class="form-control" id="site_url" name="setting_site_url" value="<?php echo htmlspecialchars($settings['site_url'] ?? 'https://kipay.benfex.net'); ?>">
+                                    </div>
+                                    
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label for="company_name" class="form-label">Company Name</label>
+                                            <input type="text" class="form-control" id="company_name" name="setting_company_name" value="<?php echo htmlspecialchars($settings['company_name'] ?? 'Benfex'); ?>">
                                         </div>
-                                    </div>
-                                    
-                                    <div class="mb-3">
-                                        <label for="company_name" class="form-label">Company Name</label>
-                                        <input type="text" class="form-control" id="company_name" name="company_name" value="<?php echo htmlspecialchars($settings['company_name'] ?? 'Benfex'); ?>">
-                                    </div>
-                                    
-                                    <div class="mb-3">
-                                        <label for="company_email" class="form-label">Company Email</label>
-                                        <input type="email" class="form-control" id="company_email" name="company_email" value="<?php echo htmlspecialchars($settings['company_email'] ?? 'info@benfex.com'); ?>">
-                                        <div class="invalid-feedback">
-                                            Please provide a valid email.
+                                        <div class="col-md-6">
+                                            <label for="company_email" class="form-label">Company Email</label>
+                                            <input type="email" class="form-control" id="company_email" name="setting_company_email" value="<?php echo htmlspecialchars($settings['company_email'] ?? 'info@benfex.com'); ?>">
                                         </div>
                                     </div>
                                     
                                     <div class="mb-3">
                                         <label for="logo_url" class="form-label">Logo URL</label>
-                                        <input type="text" class="form-control" id="logo_url" name="logo_url" value="<?php echo htmlspecialchars($settings['logo_url'] ?? '/assets/images/logo.png'); ?>">
+                                        <input type="text" class="form-control" id="logo_url" name="setting_logo_url" value="<?php echo htmlspecialchars($settings['logo_url'] ?? '/assets/images/logo.png'); ?>">
+                                    </div>
+                                    
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label for="theme_color" class="form-label">Theme Color</label>
+                                            <div class="input-group">
+                                                <input type="color" class="form-control form-control-color" id="theme_color" name="setting_theme_color" value="<?php echo htmlspecialchars($settings['theme_color'] ?? '#3490dc'); ?>">
+                                                <input type="text" class="form-control" id="theme_color_hex" value="<?php echo htmlspecialchars($settings['theme_color'] ?? '#3490dc'); ?>" readonly>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="currency" class="form-label">Default Currency</label>
+                                            <select class="form-select" id="currency" name="setting_currency">
+                                                <option value="KSH" <?php echo ($settings['currency'] ?? 'KSH') === 'KSH' ? 'selected' : ''; ?>>Kenyan Shilling (KSH)</option>
+                                                <option value="NGN" <?php echo ($settings['currency'] ?? 'KSH') === 'NGN' ? 'selected' : ''; ?>>Nigerian Naira (NGN)</option>
+                                                <option value="USD" <?php echo ($settings['currency'] ?? 'KSH') === 'USD' ? 'selected' : ''; ?>>US Dollar (USD)</option>
+                                                <option value="GHS" <?php echo ($settings['currency'] ?? 'KSH') === 'GHS' ? 'selected' : ''; ?>>Ghanaian Cedi (GHS)</option>
+                                                <option value="ZAR" <?php echo ($settings['currency'] ?? 'KSH') === 'ZAR' ? 'selected' : ''; ?>>South African Rand (ZAR)</option>
+                                            </select>
+                                        </div>
                                     </div>
                                     
                                     <div class="mb-3">
-                                        <label for="theme_color" class="form-label">Theme Color</label>
-                                        <input type="color" class="form-control form-control-color" id="theme_color" name="theme_color" value="<?php echo htmlspecialchars($settings['theme_color'] ?? '#3490dc'); ?>">
-                                    </div>
-                                    
-                                    <div class="mb-3">
-                                        <label for="currency" class="form-label">Default Currency</label>
-                                        <select class="form-select" id="currency" name="currency">
-                                            <option value="NGN" <?php echo ($settings['currency'] ?? 'NGN') === 'NGN' ? 'selected' : ''; ?>>Nigerian Naira (NGN)</option>
-                                            <option value="USD" <?php echo ($settings['currency'] ?? 'NGN') === 'USD' ? 'selected' : ''; ?>>US Dollar (USD)</option>
-                                            <option value="GHS" <?php echo ($settings['currency'] ?? 'NGN') === 'GHS' ? 'selected' : ''; ?>>Ghanaian Cedi (GHS)</option>
-                                            <option value="KES" <?php echo ($settings['currency'] ?? 'NGN') === 'KES' ? 'selected' : ''; ?>>Kenyan Shilling (KES)</option>
-                                            <option value="ZAR" <?php echo ($settings['currency'] ?? 'NGN') === 'ZAR' ? 'selected' : ''; ?>>South African Rand (ZAR)</option>
+                                        <label for="timezone" class="form-label">Timezone</label>
+                                        <select class="form-select" id="timezone" name="setting_timezone">
+                                            <option value="Africa/Nairobi" <?php echo ($settings['timezone'] ?? 'Africa/Nairobi') === 'Africa/Nairobi' ? 'selected' : ''; ?>>Africa/Nairobi (EAT)</option>
+                                            <option value="Africa/Lagos" <?php echo ($settings['timezone'] ?? 'Africa/Nairobi') === 'Africa/Lagos' ? 'selected' : ''; ?>>Africa/Lagos (WAT)</option>
+                                            <option value="Europe/London" <?php echo ($settings['timezone'] ?? 'Africa/Nairobi') === 'Europe/London' ? 'selected' : ''; ?>>Europe/London (GMT)</option>
+                                            <option value="America/New_York" <?php echo ($settings['timezone'] ?? 'Africa/Nairobi') === 'America/New_York' ? 'selected' : ''; ?>>America/New_York (EST)</option>
+                                            <option value="UTC" <?php echo ($settings['timezone'] ?? 'Africa/Nairobi') === 'UTC' ? 'selected' : ''; ?>>UTC</option>
                                         </select>
                                     </div>
                                     
                                     <button type="submit" class="btn btn-primary">
-                                        <i class="fas fa-save"></i> Save Changes
+                                        <i class="fas fa-save"></i> Save Settings
                                     </button>
                                 </form>
                             </div>
                         </div>
                     </div>
                     
-                    <!-- API Keys Settings -->
+                    <!-- API Keys -->
                     <div class="tab-pane fade" id="api" role="tabpanel" aria-labelledby="api-tab">
                         <div class="card shadow mb-4">
                             <div class="card-header py-3 d-flex justify-content-between align-items-center">
                                 <h6 class="m-0 font-weight-bold text-primary">API Keys</h6>
-                                <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#generateKeyModal">
-                                    <i class="fas fa-plus"></i> Generate New Key
-                                </button>
+                                <form action="/admin/settings/update" method="post">
+                                    <input type="hidden" name="form_type" value="api_keys">
+                                    <button type="submit" class="btn btn-primary btn-sm">
+                                        <i class="fas fa-sync-alt"></i> Regenerate Keys
+                                    </button>
+                                </form>
                             </div>
                             <div class="card-body">
-                                <?php if (isset($apiKeys) && !empty($apiKeys)) : ?>
-                                    <div class="table-responsive">
-                                        <table class="table table-hover">
-                                            <thead>
-                                                <tr>
-                                                    <th>Description</th>
-                                                    <th>API Key</th>
-                                                    <th>Created</th>
-                                                    <th>Last Used</th>
-                                                    <th>Actions</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <?php foreach ($apiKeys as $key) : ?>
-                                                    <tr>
-                                                        <td><?php echo htmlspecialchars($key['description'] ?? 'API Key'); ?></td>
-                                                        <td>
-                                                            <div class="api-key-container">
-                                                                <span class="api-key-value"><?php echo htmlspecialchars($key['api_key']); ?></span>
-                                                                <i class="fas fa-copy api-key-copy" title="Copy to clipboard"></i>
-                                                            </div>
-                                                        </td>
-                                                        <td><?php echo date('M d, Y', strtotime($key['created_at'])); ?></td>
-                                                        <td><?php echo $key['last_used_at'] ? date('M d, Y H:i', strtotime($key['last_used_at'])) : 'Never'; ?></td>
-                                                        <td>
-                                                            <a href="/admin/settings/revoke-key/<?php echo $key['id']; ?>" class="btn btn-sm btn-danger delete-btn" data-confirm="Are you sure you want to revoke this API key? This action cannot be undone.">
-                                                                <i class="fas fa-trash"></i> Revoke
-                                                            </a>
-                                                        </td>
-                                                    </tr>
-                                                <?php endforeach; ?>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                <?php else : ?>
-                                    <div class="alert alert-info">
-                                        <i class="fas fa-info-circle"></i> No API keys found. Click the "Generate New Key" button to create one.
-                                    </div>
-                                <?php endif; ?>
+                                <div class="alert alert-warning">
+                                    <i class="fas fa-exclamation-triangle"></i> <strong>Warning:</strong> Your API keys provide full access to your account. Never share them publicly.
+                                </div>
                                 
-                                <div class="alert alert-warning mt-3">
-                                    <i class="fas fa-exclamation-triangle"></i> <strong>Important:</strong> API keys provide full access to your account. Keep them secure and never share them publicly.
+                                <div class="mb-4">
+                                    <label class="form-label">API Key</label>
+                                    <div class="api-key-container input-group">
+                                        <input type="text" class="form-control api-key-value" value="<?php echo htmlspecialchars($api_key ?? 'No API key available'); ?>" readonly>
+                                        <button class="btn btn-outline-secondary api-key-copy" type="button" title="Copy to clipboard">
+                                            <i class="fas fa-copy"></i>
+                                        </button>
+                                    </div>
+                                    <div class="form-text">Use this key to authenticate API requests.</div>
+                                </div>
+                                
+                                <h6 class="font-weight-bold mt-4">API Documentation</h6>
+                                <p>Learn how to integrate with our API by checking the documentation:</p>
+                                <a href="/docs/api" class="btn btn-outline-primary" target="_blank">
+                                    <i class="fas fa-book"></i> View API Documentation
+                                </a>
+                                
+                                <h6 class="font-weight-bold mt-4">API Endpoints</h6>
+                                <div class="table-responsive">
+                                    <table class="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th>Endpoint</th>
+                                                <th>Description</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td><code>/api/transactions/initialize</code></td>
+                                                <td>Initialize a new transaction</td>
+                                            </tr>
+                                            <tr>
+                                                <td><code>/api/transactions/verify/{reference}</code></td>
+                                                <td>Verify a transaction status</td>
+                                            </tr>
+                                            <tr>
+                                                <td><code>/api/transactions/list</code></td>
+                                                <td>List all transactions</td>
+                                            </tr>
+                                            <tr>
+                                                <td><code>/api/payment-channels/list</code></td>
+                                                <td>List all payment channels</td>
+                                            </tr>
+                                            <tr>
+                                                <td><code>/api/customers/list</code></td>
+                                                <td>List all customers</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>
@@ -237,101 +235,155 @@
                                 <h6 class="m-0 font-weight-bold text-primary">Webhook Settings</h6>
                             </div>
                             <div class="card-body">
-                                <p>Use these webhook URLs in your payment provider's dashboard:</p>
+                                <p>Configure your payment provider webhooks to point to these URLs:</p>
                                 
                                 <div class="mb-3">
                                     <label class="form-label">Paystack Webhook URL</label>
-                                    <div class="api-key-container">
-                                        <input type="text" class="form-control" value="<?php echo htmlspecialchars($settings['site_url'] ?? 'http://localhost/kipay'); ?>/webhook/paystack" readonly>
-                                        <i class="fas fa-copy api-key-copy" title="Copy to clipboard"></i>
+                                    <div class="api-key-container input-group">
+                                        <input type="text" class="form-control" value="<?php echo htmlspecialchars($settings['site_url'] ?? 'https://kipay.benfex.net'); ?>/webhook/paystack" readonly>
+                                        <button class="btn btn-outline-secondary api-key-copy" type="button" title="Copy to clipboard">
+                                            <i class="fas fa-copy"></i>
+                                        </button>
                                     </div>
                                 </div>
                                 
                                 <div class="mb-3">
                                     <label class="form-label">Flutterwave Webhook URL</label>
-                                    <div class="api-key-container">
-                                        <input type="text" class="form-control" value="<?php echo htmlspecialchars($settings['site_url'] ?? 'http://localhost/kipay'); ?>/webhook/flutterwave" readonly>
-                                        <i class="fas fa-copy api-key-copy" title="Copy to clipboard"></i>
+                                    <div class="api-key-container input-group">
+                                        <input type="text" class="form-control" value="<?php echo htmlspecialchars($settings['site_url'] ?? 'https://kipay.benfex.net'); ?>/webhook/flutterwave" readonly>
+                                        <button class="btn btn-outline-secondary api-key-copy" type="button" title="Copy to clipboard">
+                                            <i class="fas fa-copy"></i>
+                                        </button>
                                     </div>
                                 </div>
                                 
                                 <div class="mb-3">
                                     <label class="form-label">Stripe Webhook URL</label>
-                                    <div class="api-key-container">
-                                        <input type="text" class="form-control" value="<?php echo htmlspecialchars($settings['site_url'] ?? 'http://localhost/kipay'); ?>/webhook/stripe" readonly>
-                                        <i class="fas fa-copy api-key-copy" title="Copy to clipboard"></i>
+                                    <div class="api-key-container input-group">
+                                        <input type="text" class="form-control" value="<?php echo htmlspecialchars($settings['site_url'] ?? 'https://kipay.benfex.net'); ?>/webhook/stripe" readonly>
+                                        <button class="btn btn-outline-secondary api-key-copy" type="button" title="Copy to clipboard">
+                                            <i class="fas fa-copy"></i>
+                                        </button>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     
-                    <!-- Email Settings -->
-                    <div class="tab-pane fade" id="email" role="tabpanel" aria-labelledby="email-tab">
+                    <!-- Payment Settings -->
+                    <div class="tab-pane fade" id="payment" role="tabpanel" aria-labelledby="payment-tab">
                         <div class="card shadow mb-4">
                             <div class="card-header py-3">
-                                <h6 class="m-0 font-weight-bold text-primary">Email Settings</h6>
+                                <h6 class="m-0 font-weight-bold text-primary">Payment Settings</h6>
                             </div>
                             <div class="card-body">
-                                <form action="/admin/settings/update" method="post" class="needs-validation" novalidate>
-                                    <input type="hidden" name="section" value="email">
+                                <form action="/admin/settings/update" method="post">
+                                    <input type="hidden" name="form_type" value="payment_settings">
                                     
-                                    <div class="mb-3">
-                                        <label for="mail_driver" class="form-label">Mail Driver</label>
-                                        <select class="form-select" id="mail_driver" name="mail_driver">
-                                            <option value="smtp" <?php echo ($settings['mail_driver'] ?? 'smtp') === 'smtp' ? 'selected' : ''; ?>>SMTP</option>
-                                            <option value="sendmail" <?php echo ($settings['mail_driver'] ?? 'smtp') === 'sendmail' ? 'selected' : ''; ?>>Sendmail</option>
-                                            <option value="mailgun" <?php echo ($settings['mail_driver'] ?? 'smtp') === 'mailgun' ? 'selected' : ''; ?>>Mailgun</option>
-                                        </select>
-                                    </div>
-                                    
-                                    <div class="mb-3">
-                                        <label for="mail_host" class="form-label">SMTP Host</label>
-                                        <input type="text" class="form-control" id="mail_host" name="mail_host" value="<?php echo htmlspecialchars($settings['mail_host'] ?? 'smtp.example.com'); ?>">
-                                    </div>
-                                    
-                                    <div class="row">
-                                        <div class="col-md-6 mb-3">
-                                            <label for="mail_port" class="form-label">SMTP Port</label>
-                                            <input type="number" class="form-control" id="mail_port" name="mail_port" value="<?php echo htmlspecialchars($settings['mail_port'] ?? '587'); ?>">
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label for="global_transaction_fee" class="form-label">Global Transaction Fee (%)</label>
+                                            <div class="input-group">
+                                                <input type="number" class="form-control" id="global_transaction_fee" name="setting_global_transaction_fee" step="0.01" min="0" max="100" value="<?php echo htmlspecialchars($settings['global_transaction_fee'] ?? '0'); ?>">
+                                                <span class="input-group-text">%</span>
+                                            </div>
+                                            <div class="form-text">Applied to all transactions unless overridden by payment channel.</div>
                                         </div>
                                         
-                                        <div class="col-md-6 mb-3">
-                                            <label for="mail_encryption" class="form-label">Encryption</label>
-                                            <select class="form-select" id="mail_encryption" name="mail_encryption">
-                                                <option value="tls" <?php echo ($settings['mail_encryption'] ?? 'tls') === 'tls' ? 'selected' : ''; ?>>TLS</option>
-                                                <option value="ssl" <?php echo ($settings['mail_encryption'] ?? 'tls') === 'ssl' ? 'selected' : ''; ?>>SSL</option>
-                                                <option value="none" <?php echo ($settings['mail_encryption'] ?? 'tls') === 'none' ? 'selected' : ''; ?>>None</option>
-                                            </select>
+                                        <div class="col-md-6">
+                                            <label for="fixed_transaction_fee" class="form-label">Fixed Transaction Fee</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text"><?php echo htmlspecialchars($settings['currency'] ?? 'KSH'); ?></span>
+                                                <input type="number" class="form-control" id="fixed_transaction_fee" name="setting_fixed_transaction_fee" step="0.01" min="0" value="<?php echo htmlspecialchars($settings['fixed_transaction_fee'] ?? '0'); ?>">
+                                            </div>
+                                            <div class="form-text">Applied in addition to percentage fee.</div>
                                         </div>
                                     </div>
                                     
                                     <div class="mb-3">
-                                        <label for="mail_username" class="form-label">SMTP Username</label>
-                                        <input type="text" class="form-control" id="mail_username" name="mail_username" value="<?php echo htmlspecialchars($settings['mail_username'] ?? ''); ?>">
+                                        <label for="fee_cap" class="form-label">Fee Cap (Maximum Fee)</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><?php echo htmlspecialchars($settings['currency'] ?? 'KSH'); ?></span>
+                                            <input type="number" class="form-control" id="fee_cap" name="setting_fee_cap" step="0.01" min="0" value="<?php echo htmlspecialchars($settings['fee_cap'] ?? '0'); ?>">
+                                        </div>
+                                        <div class="form-text">Set to 0 for no cap.</div>
                                     </div>
                                     
                                     <div class="mb-3">
-                                        <label for="mail_password" class="form-label">SMTP Password</label>
-                                        <input type="password" class="form-control" id="mail_password" name="mail_password" value="<?php echo htmlspecialchars($settings['mail_password'] ?? ''); ?>">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="show_fees_to_customer" name="setting_show_fees_to_customer" value="1" <?php echo ($settings['show_fees_to_customer'] ?? '0') === '1' ? 'checked' : ''; ?>>
+                                            <label class="form-check-label" for="show_fees_to_customer">
+                                                Show fees to customer during checkout
+                                            </label>
+                                        </div>
                                     </div>
                                     
                                     <div class="mb-3">
-                                        <label for="mail_from_address" class="form-label">From Email Address</label>
-                                        <input type="email" class="form-control" id="mail_from_address" name="mail_from_address" value="<?php echo htmlspecialchars($settings['mail_from_address'] ?? 'no-reply@kipay.com'); ?>">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="customer_pays_fees" name="setting_customer_pays_fees" value="1" <?php echo ($settings['customer_pays_fees'] ?? '0') === '1' ? 'checked' : ''; ?>>
+                                            <label class="form-check-label" for="customer_pays_fees">
+                                                Customer pays transaction fees
+                                            </label>
+                                        </div>
+                                        <div class="form-text">If enabled, fees will be added to the customer's total. If disabled, fees will be deducted from the received amount.</div>
+                                    </div>
+                                    
+                                    <hr class="my-4">
+                                    
+                                    <div class="mb-3">
+                                        <label for="success_redirect_url" class="form-label">Success Redirect URL</label>
+                                        <input type="url" class="form-control" id="success_redirect_url" name="setting_success_redirect_url" value="<?php echo htmlspecialchars($settings['success_redirect_url'] ?? '/payment/success'); ?>">
+                                        <div class="form-text">Default URL to redirect after successful payment.</div>
                                     </div>
                                     
                                     <div class="mb-3">
-                                        <label for="mail_from_name" class="form-label">From Name</label>
-                                        <input type="text" class="form-control" id="mail_from_name" name="mail_from_name" value="<?php echo htmlspecialchars($settings['mail_from_name'] ?? 'Kipay Payment Gateway'); ?>">
+                                        <label for="failure_redirect_url" class="form-label">Failure Redirect URL</label>
+                                        <input type="url" class="form-control" id="failure_redirect_url" name="setting_failure_redirect_url" value="<?php echo htmlspecialchars($settings['failure_redirect_url'] ?? '/payment/failure'); ?>">
+                                        <div class="form-text">Default URL to redirect after failed payment.</div>
                                     </div>
                                     
                                     <button type="submit" class="btn btn-primary">
-                                        <i class="fas fa-save"></i> Save Changes
+                                        <i class="fas fa-save"></i> Save Settings
                                     </button>
+                                </form>
+                            </div>
+                        </div>
+                        
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">Payment Page Customization</h6>
+                            </div>
+                            <div class="card-body">
+                                <form action="/admin/settings/update" method="post">
+                                    <input type="hidden" name="form_type" value="payment_page_settings">
                                     
-                                    <button type="button" class="btn btn-outline-primary ms-2" id="testEmailBtn">
-                                        <i class="fas fa-paper-plane"></i> Send Test Email
+                                    <div class="mb-3">
+                                        <label for="checkout_page_title" class="form-label">Checkout Page Title</label>
+                                        <input type="text" class="form-control" id="checkout_page_title" name="setting_checkout_page_title" value="<?php echo htmlspecialchars($settings['checkout_page_title'] ?? 'Secure Checkout'); ?>">
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="checkout_description" class="form-label">Checkout Page Description</label>
+                                        <textarea class="form-control" id="checkout_description" name="setting_checkout_description" rows="2"><?php echo htmlspecialchars($settings['checkout_description'] ?? 'Complete your payment securely.'); ?></textarea>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="checkout_logo" class="form-label">Checkout Page Logo URL</label>
+                                        <input type="url" class="form-control" id="checkout_logo" name="setting_checkout_logo" value="<?php echo htmlspecialchars($settings['checkout_logo'] ?? $settings['logo_url'] ?? '/assets/images/logo.png'); ?>">
+                                        <div class="form-text">Leave blank to use the default site logo.</div>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="show_payment_methods_icons" name="setting_show_payment_methods_icons" value="1" <?php echo ($settings['show_payment_methods_icons'] ?? '1') === '1' ? 'checked' : ''; ?>>
+                                            <label class="form-check-label" for="show_payment_methods_icons">
+                                                Show payment method icons
+                                            </label>
+                                        </div>
+                                    </div>
+                                    
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-save"></i> Save Settings
                                     </button>
                                 </form>
                             </div>
@@ -339,101 +391,104 @@
                     </div>
                     
                     <!-- Notification Settings -->
-                    <div class="tab-pane fade" id="notifications" role="tabpanel" aria-labelledby="notifications-tab">
+                    <div class="tab-pane fade" id="notification" role="tabpanel" aria-labelledby="notification-tab">
                         <div class="card shadow mb-4">
                             <div class="card-header py-3">
-                                <h6 class="m-0 font-weight-bold text-primary">Notification Settings</h6>
+                                <h6 class="m-0 font-weight-bold text-primary">Email Notification Settings</h6>
                             </div>
                             <div class="card-body">
                                 <form action="/admin/settings/update" method="post">
-                                    <input type="hidden" name="section" value="notifications">
+                                    <input type="hidden" name="form_type" value="notification_settings">
                                     
-                                    <h6 class="mb-3">Email Notifications</h6>
+                                    <h6 class="mb-3 font-weight-bold">Administrator Notifications</h6>
                                     
                                     <div class="mb-3">
                                         <div class="form-check form-switch">
-                                            <input class="form-check-input" type="checkbox" id="notify_admin_new_transaction" name="notify_admin_new_transaction" value="1" <?php echo ($settings['notify_admin_new_transaction'] ?? '0') === '1' ? 'checked' : ''; ?>>
+                                            <input class="form-check-input" type="checkbox" id="notify_admin_new_transaction" name="setting_notify_admin_new_transaction" value="1" <?php echo ($settings['notify_admin_new_transaction'] ?? '1') === '1' ? 'checked' : ''; ?>>
                                             <label class="form-check-label" for="notify_admin_new_transaction">
-                                                Notify admin on new transaction
+                                                New transaction notifications
                                             </label>
                                         </div>
                                     </div>
                                     
                                     <div class="mb-3">
                                         <div class="form-check form-switch">
-                                            <input class="form-check-input" type="checkbox" id="notify_admin_failed_transaction" name="notify_admin_failed_transaction" value="1" <?php echo ($settings['notify_admin_failed_transaction'] ?? '0') === '1' ? 'checked' : ''; ?>>
+                                            <input class="form-check-input" type="checkbox" id="notify_admin_successful_transaction" name="setting_notify_admin_successful_transaction" value="1" <?php echo ($settings['notify_admin_successful_transaction'] ?? '1') === '1' ? 'checked' : ''; ?>>
+                                            <label class="form-check-label" for="notify_admin_successful_transaction">
+                                                Successful transaction notifications
+                                            </label>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="notify_admin_failed_transaction" name="setting_notify_admin_failed_transaction" value="1" <?php echo ($settings['notify_admin_failed_transaction'] ?? '1') === '1' ? 'checked' : ''; ?>>
                                             <label class="form-check-label" for="notify_admin_failed_transaction">
-                                                Notify admin on failed transaction
+                                                Failed transaction notifications
                                             </label>
                                         </div>
                                     </div>
                                     
                                     <div class="mb-3">
+                                        <label for="admin_notification_emails" class="form-label">Admin Notification Emails</label>
+                                        <input type="text" class="form-control" id="admin_notification_emails" name="setting_admin_notification_emails" value="<?php echo htmlspecialchars($settings['admin_notification_emails'] ?? ''); ?>" placeholder="email@example.com, another@example.com">
+                                        <div class="form-text">Comma-separated list of email addresses to receive admin notifications.</div>
+                                    </div>
+                                    
+                                    <hr class="my-4">
+                                    
+                                    <h6 class="mb-3 font-weight-bold">Customer Notifications</h6>
+                                    
+                                    <div class="mb-3">
                                         <div class="form-check form-switch">
-                                            <input class="form-check-input" type="checkbox" id="notify_customer_transaction_receipt" name="notify_customer_transaction_receipt" value="1" <?php echo ($settings['notify_customer_transaction_receipt'] ?? '0') === '1' ? 'checked' : ''; ?>>
+                                            <input class="form-check-input" type="checkbox" id="notify_customer_transaction_receipt" name="setting_notify_customer_transaction_receipt" value="1" <?php echo ($settings['notify_customer_transaction_receipt'] ?? '1') === '1' ? 'checked' : ''; ?>>
                                             <label class="form-check-label" for="notify_customer_transaction_receipt">
-                                                Send receipt to customer on successful payment
+                                                Send transaction receipts to customers
                                             </label>
                                         </div>
                                     </div>
                                     
                                     <div class="mb-3">
                                         <div class="form-check form-switch">
-                                            <input class="form-check-input" type="checkbox" id="notify_customer_transaction_failed" name="notify_customer_transaction_failed" value="1" <?php echo ($settings['notify_customer_transaction_failed'] ?? '0') === '1' ? 'checked' : ''; ?>>
-                                            <label class="form-check-label" for="notify_customer_transaction_failed">
-                                                Notify customer on failed payment
+                                            <input class="form-check-input" type="checkbox" id="notify_customer_payment_failure" name="setting_notify_customer_payment_failure" value="1" <?php echo ($settings['notify_customer_payment_failure'] ?? '0') === '1' ? 'checked' : ''; ?>>
+                                            <label class="form-check-label" for="notify_customer_payment_failure">
+                                                Notify customers of payment failures
                                             </label>
                                         </div>
                                     </div>
                                     
-                                    <h6 class="mb-3 mt-4">Admin Notification Recipients</h6>
+                                    <hr class="my-4">
+                                    
+                                    <h6 class="mb-3 font-weight-bold">Email Settings</h6>
                                     
                                     <div class="mb-3">
-                                        <label for="admin_notification_emails" class="form-label">Email Addresses (comma separated)</label>
-                                        <input type="text" class="form-control" id="admin_notification_emails" name="admin_notification_emails" value="<?php echo htmlspecialchars($settings['admin_notification_emails'] ?? ''); ?>" placeholder="admin@example.com, support@example.com">
+                                        <label for="mail_from_name" class="form-label">Sender Name</label>
+                                        <input type="text" class="form-control" id="mail_from_name" name="setting_mail_from_name" value="<?php echo htmlspecialchars($settings['mail_from_name'] ?? 'Kipay Payment Gateway'); ?>">
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="mail_from_email" class="form-label">Sender Email</label>
+                                        <input type="email" class="form-control" id="mail_from_email" name="setting_mail_from_email" value="<?php echo htmlspecialchars($settings['mail_from_email'] ?? 'noreply@kipay.com'); ?>">
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <a href="#" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#testEmailModal">
+                                            <i class="fas fa-paper-plane"></i> Send Test Email
+                                        </a>
                                     </div>
                                     
                                     <button type="submit" class="btn btn-primary">
-                                        <i class="fas fa-save"></i> Save Changes
+                                        <i class="fas fa-save"></i> Save Settings
                                     </button>
                                 </form>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            </main>
         </div>
     </div>
-
-    <!-- Generate API Key Modal -->
-    <div class="modal fade" id="generateKeyModal" tabindex="-1" aria-labelledby="generateKeyModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title" id="generateKeyModalLabel">Generate API Key</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form action="/admin/settings/generate-key" method="post" id="apiKeyForm">
-                        <div class="mb-3">
-                            <label for="key_description" class="form-label">Description</label>
-                            <input type="text" class="form-control" id="key_description" name="description" placeholder="e.g., Website Integration" required>
-                            <div class="form-text">This helps you identify what the key is used for.</div>
-                        </div>
-                        
-                        <div class="alert alert-warning">
-                            <i class="fas fa-exclamation-triangle"></i> The API Secret will only be shown once. Make sure to copy it immediately.
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" form="apiKeyForm" class="btn btn-primary">Generate Key</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
+    
     <!-- Test Email Modal -->
     <div class="modal fade" id="testEmailModal" tabindex="-1" aria-labelledby="testEmailModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -448,6 +503,10 @@
                             <label for="test_email" class="form-label">Recipient Email</label>
                             <input type="email" class="form-control" id="test_email" name="email" value="<?php echo htmlspecialchars($user['email'] ?? ''); ?>" required>
                         </div>
+                        <div class="mb-3">
+                            <label for="test_subject" class="form-label">Subject</label>
+                            <input type="text" class="form-control" id="test_subject" name="subject" value="Kipay Test Email" required>
+                        </div>
                     </form>
                 </div>
                 <div class="modal-footer">
@@ -457,18 +516,57 @@
             </div>
         </div>
     </div>
-
-    <!-- Bootstrap JS Bundle with Popper -->
+    
+    <!-- Footer -->
+    <?php include KIPAY_PATH . '/src/Templates/admin/partials/footer.php'; ?>
+    
+    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     
     <!-- Custom JS -->
     <script src="/assets/js/admin.js"></script>
     
     <script>
-        // Test email button event
-        document.getElementById('testEmailBtn').addEventListener('click', function() {
-            const testEmailModal = new bootstrap.Modal(document.getElementById('testEmailModal'));
-            testEmailModal.show();
+        $(document).ready(function() {
+            // Update hex input when color picker changes
+            $('#theme_color').on('input', function() {
+                $('#theme_color_hex').val($(this).val());
+            });
+            
+            // Copy to clipboard functionality
+            $('.api-key-copy').click(function() {
+                const inputElement = $(this).closest('.input-group').find('input');
+                inputElement.select();
+                document.execCommand('copy');
+                
+                // Show success feedback
+                const originalHtml = $(this).html();
+                $(this).html('<i class="fas fa-check"></i>');
+                $(this).addClass('btn-success').removeClass('btn-outline-secondary');
+                
+                setTimeout(() => {
+                    $(this).html(originalHtml);
+                    $(this).addClass('btn-outline-secondary').removeClass('btn-success');
+                }, 2000);
+            });
+            
+            // Tab persistence across page reloads
+            $('a[data-bs-toggle="tab"]').on('shown.bs.tab', function (e) {
+                localStorage.setItem('activeSettingsTab', $(e.target).attr('href'));
+            });
+            
+            // Check if there's a saved tab and activate it
+            const activeTab = localStorage.getItem('activeSettingsTab');
+            if (activeTab) {
+                const tabPane = document.querySelector(activeTab);
+                if (tabPane) {
+                    const tab = new bootstrap.Tab(document.querySelector(`[data-bs-target="${activeTab}"]`));
+                    tab.show();
+                }
+            }
         });
     </script>
 </body>

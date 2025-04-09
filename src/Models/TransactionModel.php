@@ -381,17 +381,17 @@ class TransactionModel
             }
             
             $query = "SELECT 
-                DATE_FORMAT(created_at, :date_format) as label,
-                SUM(CASE WHEN status = 'completed' THEN amount ELSE 0 END) as completed_amount,
-                SUM(CASE WHEN status = 'failed' THEN amount ELSE 0 END) as failed_amount,
-                SUM(CASE WHEN status = 'pending' THEN amount ELSE 0 END) as pending_amount,
-                COUNT(*) as total_transactions
-                FROM transactions
-                WHERE user_id = :user_id
-                GROUP BY $groupBy
-                ORDER BY created_at DESC
-                LIMIT :limit";
-            
+            DATE_FORMAT(created_at, :date_format) as label,
+            SUM(CASE WHEN status = 'completed' THEN amount ELSE 0 END) as completed_amount,
+            SUM(CASE WHEN status = 'failed' THEN amount ELSE 0 END) as failed_amount,
+            SUM(CASE WHEN status = 'pending' THEN amount ELSE 0 END) as pending_amount,
+            COUNT(*) as total_transactions
+            FROM transactions
+            WHERE user_id = :user_id
+            GROUP BY DATE(created_at), label
+            ORDER BY MIN(created_at) DESC
+            LIMIT :limit";
+                        
             $params = [
                 'user_id' => $userId,
                 'date_format' => $dateFormat,
