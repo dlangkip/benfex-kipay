@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Transactions - Kipay Admin</title>
+    <title><?php echo htmlspecialchars($page_title); ?> - Kipay Admin</title>
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
     
     <!-- DataTables CSS -->
     <link href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css" rel="stylesheet">
@@ -21,74 +21,57 @@
     <link rel="icon" href="/assets/images/favicon.ico" type="image/x-icon">
 </head>
 <body>
-    <div class="wrapper">
-        <!-- Sidebar -->
-        <nav id="sidebar">
-            <div class="sidebar-header">
-                <h3>Kipay Admin</h3>
-                <img src="/assets/images/logo.png" alt="Kipay" class="logo">
-            </div>
+    <!-- Navigation -->
+    <?php include KIPAY_PATH . '/src/Templates/admin/partials/header.php'; ?>
 
-            <ul class="list-unstyled components">
-                <li>
-                    <a href="/admin"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
-                </li>
-                <li class="active">
-                    <a href="/admin/transactions"><i class="fas fa-exchange-alt"></i> Transactions</a>
-                </li>
-                <li>
-                    <a href="/admin/payment-channels"><i class="fas fa-credit-card"></i> Payment Channels</a>
-                </li>
-                <li>
-                    <a href="/admin/customers"><i class="fas fa-users"></i> Customers</a>
-                </li>
-                <li>
-                    <a href="/admin/settings"><i class="fas fa-cog"></i> Settings</a>
-                </li>
-                <li>
-                    <a href="/admin/profile"><i class="fas fa-user"></i> Profile</a>
-                </li>
-                <li>
-                    <a href="/admin/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
-                </li>
-            </ul>
-
-            <div class="sidebar-footer">
-                <p>Kipay Payment Gateway<br>Version 1.0.0</p>
-            </div>
-        </nav>
-
-        <!-- Page Content -->
-        <div id="content">
-            <!-- Top Navbar -->
-            <nav class="navbar navbar-expand-lg navbar-light bg-light">
-                <div class="container-fluid">
-                    <button type="button" id="sidebarCollapse" class="btn btn-primary">
-                        <i class="fas fa-bars"></i>
-                    </button>
-                    
-                    <div class="ms-auto d-flex align-items-center">
-                        <div class="dropdown">
-                            <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="fas fa-user"></i> <?php echo htmlspecialchars($user['username'] ?? 'Admin'); ?>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <?php include KIPAY_PATH . '/src/Templates/admin/partials/sidebar.php'; ?>
+            
+            <!-- Main Content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2"><?php echo htmlspecialchars($page_title); ?></h1>
+                    <div class="btn-toolbar mb-2 mb-md-0">
+                        <a href="/admin/transactions/export<?php echo !empty($_SERVER['QUERY_STRING']) ? '?' . $_SERVER['QUERY_STRING'] : ''; ?>" class="btn btn-sm btn-outline-secondary me-2">
+                            <i class="fas fa-file-export"></i> Export
+                        </a>
+                        <div class="btn-group me-2">
+                            <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-filter"></i> Filter
                             </button>
-                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
-                                <li><a class="dropdown-item" href="/admin/profile"><i class="fas fa-user-cog"></i> Profile</a></li>
-                                <li><a class="dropdown-item" href="/admin/logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item" href="/admin/transactions?status=pending">Pending Transactions</a></li>
+                                <li><a class="dropdown-item" href="/admin/transactions?status=completed">Completed Transactions</a></li>
+                                <li><a class="dropdown-item" href="/admin/transactions?status=failed">Failed Transactions</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="/admin/transactions">All Transactions</a></li>
                             </ul>
                         </div>
                     </div>
                 </div>
-            </nav>
-
-            <!-- Transactions Content -->
-            <div class="container-fluid">
-                <h1 class="mt-4 mb-4">Transactions</h1>
+                
+                <?php if (isset($_SESSION['success_message'])): ?>
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <?php echo htmlspecialchars($_SESSION['success_message']); ?>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        <?php unset($_SESSION['success_message']); ?>
+                    </div>
+                <?php endif; ?>
+                
+                <?php if (isset($_SESSION['error_message'])): ?>
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <?php echo htmlspecialchars($_SESSION['error_message']); ?>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        <?php unset($_SESSION['error_message']); ?>
+                    </div>
+                <?php endif; ?>
                 
                 <!-- Filter Section -->
                 <div class="card shadow mb-4">
                     <div class="card-header py-3">
-                        <h6 class="m-0 font-weight-bold text-primary">Filters</h6>
+                        <h6 class="m-0 font-weight-bold text-primary">Search & Filter</h6>
                     </div>
                     <div class="card-body">
                         <form action="/admin/transactions" method="get" id="filterForm">
@@ -112,11 +95,10 @@
                                     <label for="payment_method" class="form-label">Payment Method</label>
                                     <select class="form-select" id="payment_method" name="payment_method">
                                         <option value="">All Methods</option>
-                                        <?php if (isset($paymentMethods) && is_array($paymentMethods)) : ?>
-                                            <?php foreach ($paymentMethods as $method) : ?>
-                                                <option value="<?php echo htmlspecialchars($method); ?>" <?php echo isset($filters['payment_method']) && $filters['payment_method'] === $method ? 'selected' : ''; ?>><?php echo htmlspecialchars(ucfirst($method)); ?></option>
-                                            <?php endforeach; ?>
-                                        <?php endif; ?>
+                                        <option value="card" <?php echo isset($filters['payment_method']) && $filters['payment_method'] === 'card' ? 'selected' : ''; ?>>Card</option>
+                                        <option value="bank" <?php echo isset($filters['payment_method']) && $filters['payment_method'] === 'bank' ? 'selected' : ''; ?>>Bank Transfer</option>
+                                        <option value="ussd" <?php echo isset($filters['payment_method']) && $filters['payment_method'] === 'ussd' ? 'selected' : ''; ?>>USSD</option>
+                                        <option value="mobile_money" <?php echo isset($filters['payment_method']) && $filters['payment_method'] === 'mobile_money' ? 'selected' : ''; ?>>Mobile Money</option>
                                     </select>
                                 </div>
                                 <div class="col-md-3 mb-3">
@@ -141,20 +123,8 @@
                 
                 <!-- Transactions Table -->
                 <div class="card shadow mb-4">
-                    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                        <h6 class="m-0 font-weight-bold text-primary">All Transactions</h6>
-                        <div class="dropdown no-arrow">
-                            <button class="btn btn-link btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="fas fa-ellipsis-v fa-sm text-gray-400"></i>
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-end shadow animated--fade-in" aria-labelledby="dropdownMenuButton">
-                                <li><a class="dropdown-item" href="/admin/transactions?status=pending">View Pending</a></li>
-                                <li><a class="dropdown-item" href="/admin/transactions?status=completed">View Completed</a></li>
-                                <li><a class="dropdown-item" href="/admin/transactions?status=failed">View Failed</a></li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="/admin/transactions/export">Export All</a></li>
-                            </ul>
-                        </div>
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Transaction List</h6>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
@@ -172,12 +142,12 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php if (isset($transactions) && !empty($transactions['data'])) : ?>
-                                        <?php foreach ($transactions['data'] as $transaction) : ?>
+                                    <?php if (isset($transactions) && !empty($transactions['data'])): ?>
+                                        <?php foreach ($transactions['data'] as $transaction): ?>
                                             <tr>
                                                 <td><?php echo $transaction['id']; ?></td>
                                                 <td><?php echo htmlspecialchars($transaction['reference']); ?></td>
-                                                <td><?php echo htmlspecialchars($transaction['currency'] ?? 'NGN'); ?> <?php echo number_format($transaction['amount'], 2); ?></td>
+                                                <td><?php echo htmlspecialchars($transaction['currency'] ?? 'KSH'); ?> <?php echo number_format($transaction['amount'], 2); ?></td>
                                                 <td><?php echo htmlspecialchars($transaction['customer_email'] ?? 'N/A'); ?></td>
                                                 <td><?php echo htmlspecialchars($transaction['payment_channel_name'] ?? 'N/A'); ?></td>
                                                 <td>
@@ -196,18 +166,20 @@
                                                 </td>
                                                 <td><?php echo date('M d, Y H:i', strtotime($transaction['created_at'])); ?></td>
                                                 <td>
-                                                    <a href="/admin/transactions/view/<?php echo $transaction['id']; ?>" class="btn btn-sm btn-info">
-                                                        <i class="fas fa-eye"></i>
-                                                    </a>
-                                                    <?php if ($transaction['status'] === 'pending') : ?>
-                                                        <a href="/admin/transactions/verify/<?php echo $transaction['id']; ?>" class="btn btn-sm btn-warning" title="Verify Status">
-                                                            <i class="fas fa-sync-alt"></i>
+                                                    <div class="btn-group">
+                                                        <a href="/admin/transactions/view/<?php echo $transaction['id']; ?>" class="btn btn-sm btn-info">
+                                                            <i class="fas fa-eye"></i>
                                                         </a>
-                                                    <?php endif; ?>
+                                                        <?php if ($transaction['status'] === 'pending'): ?>
+                                                            <a href="/admin/transactions/verify/<?php echo $transaction['id']; ?>" class="btn btn-sm btn-warning" title="Verify Status">
+                                                                <i class="fas fa-sync-alt"></i>
+                                                            </a>
+                                                        <?php endif; ?>
+                                                    </div>
                                                 </td>
                                             </tr>
                                         <?php endforeach; ?>
-                                    <?php else : ?>
+                                    <?php else: ?>
                                         <tr>
                                             <td colspan="8" class="text-center">No transactions found</td>
                                         </tr>
@@ -217,16 +189,16 @@
                         </div>
                         
                         <!-- Pagination -->
-                        <?php if (isset($transactions) && $transactions['pages'] > 1) : ?>
+                        <?php if (isset($transactions) && $transactions['pages'] > 1): ?>
                             <nav aria-label="Transactions pagination">
                                 <ul class="pagination justify-content-center mt-4">
-                                    <?php if ($transactions['page'] > 1) : ?>
+                                    <?php if ($transactions['page'] > 1): ?>
                                         <li class="page-item">
                                             <a class="page-link" href="<?php echo '/admin/transactions?' . http_build_query(array_merge($filters, ['page' => $transactions['page'] - 1])); ?>">
                                                 <i class="fas fa-chevron-left"></i> Previous
                                             </a>
                                         </li>
-                                    <?php else : ?>
+                                    <?php else: ?>
                                         <li class="page-item disabled">
                                             <span class="page-link"><i class="fas fa-chevron-left"></i> Previous</span>
                                         </li>
@@ -236,7 +208,7 @@
                                     $startPage = max(1, $transactions['page'] - 2);
                                     $endPage = min($transactions['pages'], $startPage + 4);
                                     
-                                    for ($i = $startPage; $i <= $endPage; $i++) :
+                                    for ($i = $startPage; $i <= $endPage; $i++):
                                     ?>
                                         <li class="page-item <?php echo $i === $transactions['page'] ? 'active' : ''; ?>">
                                             <a class="page-link" href="<?php echo '/admin/transactions?' . http_build_query(array_merge($filters, ['page' => $i])); ?>">
@@ -245,13 +217,13 @@
                                         </li>
                                     <?php endfor; ?>
                                     
-                                    <?php if ($transactions['page'] < $transactions['pages']) : ?>
+                                    <?php if ($transactions['page'] < $transactions['pages']): ?>
                                         <li class="page-item">
                                             <a class="page-link" href="<?php echo '/admin/transactions?' . http_build_query(array_merge($filters, ['page' => $transactions['page'] + 1])); ?>">
                                                 Next <i class="fas fa-chevron-right"></i>
                                             </a>
                                         </li>
-                                    <?php else : ?>
+                                    <?php else: ?>
                                         <li class="page-item disabled">
                                             <span class="page-link">Next <i class="fas fa-chevron-right"></i></span>
                                         </li>
@@ -261,11 +233,14 @@
                         <?php endif; ?>
                     </div>
                 </div>
-            </div>
+            </main>
         </div>
     </div>
-
-    <!-- Bootstrap JS Bundle with Popper -->
+    
+    <!-- Footer -->
+    <?php include KIPAY_PATH . '/src/Templates/admin/partials/footer.php'; ?>
+    
+    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     
     <!-- jQuery -->
@@ -275,7 +250,38 @@
     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
     
-    <!-- Custom JS -->
-    <script src="/assets/js/admin.js"></script>
+    <!-- Date Range Picker -->
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/daterangepicker@3.1.0/daterangepicker.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker@3.1.0/daterangepicker.css">
+    
+    <script>
+        $(document).ready(function() {
+            // Initialize date range picker
+            $('#dateRange').daterangepicker({
+                opens: 'left',
+                autoUpdateInput: false,
+                locale: {
+                    cancelLabel: 'Clear'
+                },
+                ranges: {
+                   'Today': [moment(), moment()],
+                   'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                   'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                   'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+                   'This Month': [moment().startOf('month'), moment().endOf('month')],
+                   'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                }
+            });
+            
+            $('#dateRange').on('apply.daterangepicker', function(ev, picker) {
+                $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
+            });
+            
+            $('#dateRange').on('cancel.daterangepicker', function(ev, picker) {
+                $(this).val('');
+            });
+        });
+    </script>
 </body>
 </html>

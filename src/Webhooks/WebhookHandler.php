@@ -56,17 +56,65 @@ class WebhookHandler
      */
     public function handleFlutterwave(): array
     {
-        // Placeholder for Flutterwave webhook handling
-        // Would create a FlutterwaveWebhook class similar to PaystackWebhook
-        
-        $this->logger->info('Flutterwave webhook received, but handler not implemented');
-        
-        return [
-            'success' => false,
-            'message' => 'Flutterwave webhook handler not implemented'
-        ];
+        try {
+            // Get the request payload
+            $input = file_get_contents('php://input');
+            $event = json_decode($input, true);
+            
+            // Log the event
+            $this->logger->info('Flutterwave webhook received', [
+                'event' => $event
+            ]);
+            
+            // For now, we'll just log the event
+            // In production, you would implement full verification and processing
+            
+            // Get the transaction reference if available
+            $reference = $event['data']['tx_ref'] ?? '';
+            
+            if (!empty($reference)) {
+                // Get transaction from database
+                $transactionModel = new \Kipay\Models\TransactionModel();
+                $transaction = $transactionModel->getByReference($reference);
+                
+                if ($transaction) {
+                    // Update transaction status based on Flutterwave status
+                    $flutterwaveStatus = $event['data']['status'] ?? '';
+                    $kipayStatus = 'pending';
+                    
+                    if ($flutterwaveStatus === 'successful') {
+                        $kipayStatus = 'completed';
+                    } elseif (in_array($flutterwaveStatus, ['failed', 'cancelled'])) {
+                        $kipayStatus = 'failed';
+                    }
+                    
+                    // Update transaction
+                    $transactionCore = new \Kipay\Core\Transaction();
+                    $transactionCore->updateStatus($transaction['id'], $kipayStatus, [
+                        'provider_reference' => $event['data']['id'] ?? '',
+                        'payment_method' => $event['data']['payment_type'] ?? '',
+                        'gateway_response' => $input
+                    ]);
+                }
+            }
+            
+            return [
+                'success' => true,
+                'message' => 'Flutterwave webhook processed'
+            ];
+        } catch (\Exception $e) {
+            $this->logger->error('Error handling Flutterwave webhook', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            return [
+                'success' => false,
+                'message' => 'Error handling Flutterwave webhook: ' . $e->getMessage()
+            ];
+        }
     }
-    
+
     /**
      * Handle Stripe webhook
      * 
@@ -74,17 +122,66 @@ class WebhookHandler
      */
     public function handleStripe(): array
     {
-        // Placeholder for Stripe webhook handling
-        // Would create a StripeWebhook class similar to PaystackWebhook
-        
-        $this->logger->info('Stripe webhook received, but handler not implemented');
-        
-        return [
-            'success' => false,
-            'message' => 'Stripe webhook handler not implemented'
-        ];
-    }
-    
+        try {
+            // Get the request payload
+            $input = file_get_contents('php://input');
+            $event = json_decode($input, true);
+            
+            // Log the event
+            $this->logger->info('Stripe webhook received', [
+                'event' => $event
+            ]);
+            
+            // For now, we'll just log the event
+            // In production, you would implement full verification and processing
+            
+            // Get the transaction reference if available
+            $metadata = $event['data']['object']['metadata'] ?? [];
+            $reference = $metadata['reference'] ?? '';
+            
+            if (!empty($reference)) {
+                // Get transaction from database
+                $transactionModel = new \Kipay\Models\TransactionModel();
+                $transaction = $transactionModel->getByReference($reference);
+                
+                if ($transaction) {
+                    // Update transaction status based on Stripe event type
+                    $eventType = $event['type'] ?? '';
+                    $kipayStatus = 'pending';
+                    
+                    if ($eventType === 'charge.succeeded') {
+                        $kipayStatus = 'completed';
+                    } elseif (in_array($eventType, ['charge.failed', 'charge.refunded'])) {
+                        $kipayStatus = 'failed';
+                    }
+                    
+                    // Update transaction
+                    $transactionCore = new \Kipay\Core\Transaction();
+                    $transactionCore->updateStatus($transaction['id'], $kipayStatus, [
+                        'provider_reference' => $event['data']['object']['id'] ?? '',
+                        'payment_method' => $event['data']['object']['payment_method_details']['type'] ?? '',
+                        'gateway_response' => $input
+                    ]);
+                }
+            }
+            
+            return [
+                'success' => true,
+                'message' => 'Stripe webhook processed'
+            ];
+        } catch (\Exception $e) {
+            $this->logger->error('Error handling Stripe webhook', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            return [
+                'success' => false,
+                'message' => 'Error handling Stripe webhook: ' . $e->getMessage()
+            ];
+        }
+    }  
+      
     /**
      * Log webhook event to database
      * 

@@ -120,28 +120,53 @@ class Application
             
             // Webhook Routes
             '/webhook/paystack' => ['controller' => 'WebhookHandler', 'method' => 'handlePaystack'],
+            '/webhook/flutterwave' => ['controller' => 'WebhookHandler', 'method' => 'handleFlutterwave'],
+            '/webhook/stripe' => ['controller' => 'WebhookHandler', 'method' => 'handleStripe'],
             
             // Frontend Routes
             '/payment/checkout/([a-zA-Z0-9_-]+)' => ['controller' => 'PaymentController', 'method' => 'checkout', 'params' => ['reference']],
             '/payment/verify/([a-zA-Z0-9_-]+)' => ['controller' => 'PaymentController', 'method' => 'verify', 'params' => ['reference']],
             '/payment/success' => ['controller' => 'PaymentController', 'method' => 'success'],
             '/payment/failure' => ['controller' => 'PaymentController', 'method' => 'failure'],
+            '/payment/receipt/([a-zA-Z0-9_-]+)' => ['controller' => 'PaymentController', 'method' => 'receipt', 'params' => ['reference']],
             
             // Admin Routes
             '/admin' => ['controller' => 'AdminController', 'method' => 'dashboard'],
             '/admin/login' => ['controller' => 'AuthController', 'method' => 'login'],
             '/admin/logout' => ['controller' => 'AuthController', 'method' => 'logout'],
+            '/admin/forgot-password' => ['controller' => 'AuthController', 'method' => 'forgotPassword'],
+            '/admin/reset-password' => ['controller' => 'AuthController', 'method' => 'resetPassword'],
+            
             '/admin/transactions' => ['controller' => 'AdminController', 'method' => 'transactions'],
+            '/admin/transactions/view/([0-9]+)' => ['controller' => 'AdminController', 'method' => 'viewTransaction', 'params' => ['id']],
+            '/admin/transactions/export' => ['controller' => 'AdminController', 'method' => 'exportTransactions'],
+            '/admin/transactions/verify/([0-9]+)' => ['controller' => 'AdminController', 'method' => 'verifyTransaction', 'params' => ['id']],
+            
             '/admin/payment-channels' => ['controller' => 'AdminController', 'method' => 'paymentChannels'],
+            '/admin/payment-channels/edit/([0-9]+)' => ['controller' => 'AdminController', 'method' => 'editPaymentChannel', 'params' => ['id']],
+            '/admin/payment-channels/delete/([0-9]+)' => ['controller' => 'AdminController', 'method' => 'deletePaymentChannel', 'params' => ['id']],
+            '/admin/payment-channels/set-default/([0-9]+)' => ['controller' => 'AdminController', 'method' => 'setDefaultPaymentChannel', 'params' => ['id']],
+            
             '/admin/customers' => ['controller' => 'AdminController', 'method' => 'customers'],
+            '/admin/customers/view/([0-9]+)' => ['controller' => 'AdminController', 'method' => 'viewCustomer', 'params' => ['id']],
+            '/admin/customers/create' => ['controller' => 'AdminController', 'method' => 'createCustomer'],
+            '/admin/customers/update/([0-9]+)' => ['controller' => 'AdminController', 'method' => 'updateCustomer', 'params' => ['id']],
+            '/admin/customers/delete/([0-9]+)' => ['controller' => 'AdminController', 'method' => 'deleteCustomer', 'params' => ['id']],
+            
             '/admin/settings' => ['controller' => 'AdminController', 'method' => 'settings'],
+            '/admin/settings/update' => ['controller' => 'AdminController', 'method' => 'updateSettings'],
+            '/admin/settings/send-test-email' => ['controller' => 'AdminController', 'method' => 'sendTestEmail'],
+            
             '/admin/profile' => ['controller' => 'AdminController', 'method' => 'profile'],
+            '/admin/profile/enable-2fa' => ['controller' => 'AdminController', 'method' => 'enable2FA'],
+            '/admin/profile/disable-2fa' => ['controller' => 'AdminController', 'method' => 'disable2FA'],
+            '/admin/profile/session-management' => ['controller' => 'AdminController', 'method' => 'sessionManagement'],
             
             // Default Route
             '/' => ['controller' => 'HomeController', 'method' => 'index']
         ];
     }
-    
+        
     /**
      * Check for remember me cookie
      * 

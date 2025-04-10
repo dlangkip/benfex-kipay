@@ -108,10 +108,6 @@ class AuthController
         
         // Authenticate user
         $user = $this->userModel->authenticate($username, $password);
-
-        $user = $this->userModel->getByUsername('testadmin', true);
-        if ($user) {
-        }        
         
         if (!$user) {
             $_SESSION['error_message'] = 'Invalid username or password';
@@ -145,7 +141,7 @@ class AuthController
         header('Location: /admin');
         exit;
     }
-    
+        
     /**
      * Logout
      * 

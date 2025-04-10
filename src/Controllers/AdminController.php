@@ -182,7 +182,89 @@ class AdminController
             'payment_channels' => $paymentChannels
         ]);
     }
+
+    /**
+     * View transaction details
+     * 
+     * @param int $id Transaction ID
+     * @return void
+     */
+    public function viewTransaction(int $id = 0): void
+    {
+        // Get transaction
+        $transaction = $this->transaction->getById($id, true);
+        
+        if (!$transaction) {
+            $_SESSION['error_message'] = 'Transaction not found';
+            header('Location: /admin/transactions');
+            exit;
+        }
+        
+        // Check if transaction belongs to this user
+        if ($transaction['user_id'] != $this->user['id']) {
+            $_SESSION['error_message'] = 'You do not have permission to view this transaction';
+            header('Location: /admin/transactions');
+            exit;
+        }
+        
+        // Get customer if available
+        $customer = null;
+        if (!empty($transaction['customer_id'])) {
+            $customer = $this->customer->getById($transaction['customer_id']);
+        }
+        
+        // Get payment channel
+        $paymentChannel = $this->paymentChannel->getById($transaction['payment_channel_id']);
+        
+        // Render transaction details template
+        $this->render('transaction_details', [
+            'page_title' => 'Transaction Details',
+            'transaction' => $transaction,
+            'customer' => $customer,
+            'payment_channel' => $paymentChannel
+        ]);
+    } 
     
+    /**
+     * Verify a transaction status
+     * 
+     * @param int $id Transaction ID
+     * @return void
+     */
+    public function verifyTransaction(int $id = 0): void
+    {
+        // Get transaction
+        $transaction = $this->transaction->getById($id);
+        
+        if (!$transaction) {
+            $_SESSION['error_message'] = 'Transaction not found';
+            header('Location: /admin/transactions');
+            exit;
+        }
+        
+        // Check if transaction belongs to this user
+        if ($transaction['user_id'] != $this->user['id']) {
+            $_SESSION['error_message'] = 'You do not have permission to verify this transaction';
+            header('Location: /admin/transactions');
+            exit;
+        }
+        
+        // Verify transaction
+        $result = $this->gateway->verifyTransaction($transaction['reference']);
+        
+        if (!$result) {
+            $_SESSION['error_message'] = 'Failed to verify transaction';
+            header('Location: /admin/transactions/view/' . $id);
+            exit;
+        }
+        
+        // Set success message
+        $_SESSION['success_message'] = 'Transaction verified successfully. Status: ' . ucfirst($result['transaction']['status']);
+        
+        // Redirect to transaction details
+        header('Location: /admin/transactions/view/' . $id);
+        exit;
+    }
     /**
      * Payment channels page
      * 
@@ -293,7 +375,122 @@ class AdminController
         header('Location: /admin/payment-channels');
         exit;
     }
+
+    /**
+     * Edit payment channel
+     * 
+     * @param int $id Payment Channel ID
+     * @return void
+     */
+    public function editPaymentChannel(int $id = 0): void
+    {
+        // Get payment channel
+        $channel = $this->paymentChannel->getById($id, true);
+        
+        if (!$channel) {
+            $_SESSION['error_message'] = 'Payment channel not found';
+            header('Location: /admin/payment-channels');
+            exit;
+        }
+        
+        // Check if channel belongs to this user
+        if ($channel['user_id'] != $this->user['id']) {
+            $_SESSION['error_message'] = 'You do not have permission to edit this payment channel';
+            header('Location: /admin/payment-channels');
+            exit;
+        }
+        
+        // Handle form submission
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $this->handlePaymentChannelForm();
+            return;
+        }
+        
+        // Get supported providers
+        $providers = $this->paymentChannel->getSupportedProviders();
+        
+        // Render edit payment channel template
+        $this->render('edit_payment_channel', [
+            'page_title' => 'Edit Payment Channel',
+            'channel' => $channel,
+            'providers' => $providers
+        ]);
+    }   
     
+    /**
+     * Set a payment channel as default
+     * 
+     * @param int $id Payment Channel ID
+     * @return void
+     */
+    public function setDefaultPaymentChannel(int $id = 0): void
+    {
+        // Get payment channel
+        $channel = $this->paymentChannel->getById($id);
+        
+        if (!$channel) {
+            $_SESSION['error_message'] = 'Payment channel not found';
+            header('Location: /admin/payment-channels');
+            exit;
+        }
+        
+        // Check if channel belongs to this user
+        if ($channel['user_id'] != $this->user['id']) {
+            $_SESSION['error_message'] = 'You do not have permission to modify this payment channel';
+            header('Location: /admin/payment-channels');
+            exit;
+        }
+        
+        // Set as default
+        $success = $this->paymentChannel->setAsDefault($id);
+        
+        if ($success) {
+            $_SESSION['success_message'] = 'Payment channel has been set as default';
+        } else {
+            $_SESSION['error_message'] = 'Failed to set payment channel as default';
+        }
+        
+        header('Location: /admin/payment-channels');
+        exit;
+    }    
+
+    /**
+     * Delete a payment channel
+     * 
+     * @param int $id Payment Channel ID
+     * @return void
+     */
+    public function deletePaymentChannel(int $id = 0): void
+    {
+        // Get payment channel
+        $channel = $this->paymentChannel->getById($id);
+        
+        if (!$channel) {
+            $_SESSION['error_message'] = 'Payment channel not found';
+            header('Location: /admin/payment-channels');
+            exit;
+        }
+        
+        // Check if channel belongs to this user
+        if ($channel['user_id'] != $this->user['id']) {
+            $_SESSION['error_message'] = 'You do not have permission to delete this payment channel';
+            header('Location: /admin/payment-channels');
+            exit;
+        }
+        
+        // Delete the payment channel
+        $success = $this->paymentChannel->delete($id);
+        
+        if ($success) {
+            $_SESSION['success_message'] = 'Payment channel has been deleted';
+        } else {
+            $_SESSION['error_message'] = 'Failed to delete payment channel. It may have transactions associated with it.';
+        }
+        
+        header('Location: /admin/payment-channels');
+        exit;
+    }
+
     /**
      * Customers page
      * 
@@ -323,6 +520,41 @@ class AdminController
             'page_title' => 'Customers',
             'customers' => $customers,
             'filters' => $filters
+        ]);
+    }
+
+    /**
+     * View customer details
+     * 
+     * @param int $id Customer ID
+     * @return void
+     */
+    public function viewCustomer(int $id = 0): void
+    {
+        // Get customer
+        $customer = $this->customer->getById($id);
+        
+        if (!$customer) {
+            $_SESSION['error_message'] = 'Customer not found';
+            header('Location: /admin/customers');
+            exit;
+        }
+        
+        // Check if customer belongs to this user
+        if ($customer['user_id'] != $this->user['id']) {
+            $_SESSION['error_message'] = 'You do not have permission to view this customer';
+            header('Location: /admin/customers');
+            exit;
+        }
+        
+        // Get customer transactions
+        $transactions = $this->customer->getTransactions($id, [], 1, 10);
+        
+        // Render customer details template
+        $this->render('customer_details', [
+            'page_title' => 'Customer Details',
+            'customer' => $customer,
+            'transactions' => $transactions
         ]);
     }
     
