@@ -161,7 +161,14 @@ class Application
             '/admin/profile/enable-2fa' => ['controller' => 'AdminController', 'method' => 'enable2FA'],
             '/admin/profile/disable-2fa' => ['controller' => 'AdminController', 'method' => 'disable2FA'],
             '/admin/profile/session-management' => ['controller' => 'AdminController', 'method' => 'sessionManagement'],
-            
+
+            // Documentation Routes
+            '/docs' => ['controller' => 'DocsController', 'method' => 'index'],
+            '/docs/api' => ['controller' => 'DocsController', 'method' => 'api'],
+            '/docs/getting-started' => ['controller' => 'DocsController', 'method' => 'gettingStarted'],
+            '/docs/webhooks' => ['controller' => 'DocsController', 'method' => 'webhooks'],
+            '/docs/payment-channels' => ['controller' => 'DocsController', 'method' => 'paymentChannels'],                     
+
             // Default Route
             '/' => ['controller' => 'HomeController', 'method' => 'index']
         ];

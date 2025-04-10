@@ -635,7 +635,179 @@ class AdminController
         header('Location: /admin/settings');
         exit;
     }
+
+    /**
+     * Handle settings update
+     * 
+     * @return void
+     */
+    public function updateSettings(): void
+    {
+        // Check if the request is a POST request
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $_SESSION['error_message'] = 'Invalid request method';
+            header('Location: /admin/settings');
+            exit;
+        }
+        
+        // Get form data
+        $data = $_POST;
+        
+        // Determine form type
+        $formType = $data['form_type'] ?? '';
+        
+        switch ($formType) {
+            case 'general_settings':
+                // Update general settings
+                foreach ($data as $key => $value) {
+                    if (strpos($key, 'setting_') === 0) {
+                        $settingKey = substr($key, 8);
+                        $this->config->saveSetting($settingKey, $value);
+                    }
+                }
+                
+                $_SESSION['success_message'] = 'Settings updated successfully';
+                break;
+                
+            case 'api_keys':
+                // Regenerate API keys
+                $keys = $this->userModel->regenerateApiCredentials($this->user['id']);
+                
+                if ($keys) {
+                    $_SESSION['api_keys'] = $keys;
+                    $_SESSION['success_message'] = 'API keys regenerated successfully';
+                } else {
+                    $_SESSION['error_message'] = 'Failed to regenerate API keys';
+                }
+                break;
+                
+            case 'payment_settings':
+                // Handle payment settings
+                foreach ($data as $key => $value) {
+                    if (strpos($key, 'setting_') === 0) {
+                        $settingKey = substr($key, 8);
+                        $this->config->saveSetting($settingKey, $value);
+                    }
+                }
+                
+                $_SESSION['success_message'] = 'Payment settings updated successfully';
+                break;
+                
+            case 'notification_settings':
+                // Handle notification settings
+                foreach ($data as $key => $value) {
+                    if (strpos($key, 'setting_') === 0) {
+                        $settingKey = substr($key, 8);
+                        $this->config->saveSetting($settingKey, $value);
+                    }
+                }
+                
+                $_SESSION['success_message'] = 'Notification settings updated successfully';
+                break;
+                
+            case 'payment_page_settings':
+                // Handle payment page settings
+                foreach ($data as $key => $value) {
+                    if (strpos($key, 'setting_') === 0) {
+                        $settingKey = substr($key, 8);
+                        $this->config->saveSetting($settingKey, $value);
+                    }
+                }
+                
+                $_SESSION['success_message'] = 'Payment page settings updated successfully';
+                break;
+                
+            default:
+                $_SESSION['error_message'] = 'Unknown settings type';
+                break;
+        }
+        
+        // Redirect back to the settings page
+        header('Location: /admin/settings');
+        exit;
+    } 
     
+    /**
+     * Send test email
+     * 
+     * @return void
+     */
+    public function sendTestEmail(): void
+    {
+        // Check if request is a POST request
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $_SESSION['error_message'] = 'Invalid request method';
+            header('Location: /admin/settings');
+            exit;
+        }
+        
+        // Get form data
+        $email = $_POST['email'] ?? '';
+        $subject = $_POST['subject'] ?? 'Kipay Test Email';
+        
+        if (empty($email)) {
+            $_SESSION['error_message'] = 'Email address is required';
+            header('Location: /admin/settings');
+            exit;
+        }
+        
+        // Get mail settings
+        $fromName = $this->config->get('mail_from_name', 'Kipay Payment Gateway');
+        $fromEmail = $this->config->get('mail_from_email', 'noreply@kipay.com');
+        
+        // Set mail headers
+        $headers = [
+            'From' => "$fromName <$fromEmail>",
+            'Reply-To' => $fromEmail,
+            'X-Mailer' => 'Kipay Payment Gateway',
+            'Content-Type' => 'text/html; charset=UTF-8'
+        ];
+        
+        // Prepare header string
+        $headerString = '';
+        foreach ($headers as $name => $value) {
+            $headerString .= "$name: $value\r\n";
+        }
+        
+        // Prepare mail content
+        $content = '
+        <html>
+        <head>
+            <title>' . htmlspecialchars($subject) . '</title>
+        </head>
+        <body>
+            <div style="max-width: 600px; margin: 0 auto; padding: 20px; font-family: Arial, sans-serif;">
+                <div style="background-color: #3490dc; padding: 20px; color: white; text-align: center; border-radius: 5px 5px 0 0;">
+                    <h2>' . htmlspecialchars($subject) . '</h2>
+                </div>
+                <div style="background-color: #ffffff; padding: 20px; border-radius: 0 0 5px 5px; border: 1px solid #e4e4e4;">
+                    <p>This is a test email from your Kipay Payment Gateway.</p>
+                    <p>If you received this email, your email settings are configured correctly.</p>
+                    <p>Time sent: ' . date('Y-m-d H:i:s') . '</p>
+                    <p>Sent to: ' . htmlspecialchars($email) . '</p>
+                    <hr>
+                    <p style="font-size: 12px; color: #666; text-align: center;">
+                        &copy; ' . date('Y') . ' Kipay Payment Gateway. All rights reserved.
+                    </p>
+                </div>
+            </div>
+        </body>
+        </html>
+        ';
+        
+        // Send the email
+        $success = mail($email, $subject, $content, $headerString);
+        
+        if ($success) {
+            $_SESSION['success_message'] = 'Test email sent successfully to ' . $email;
+        } else {
+            $_SESSION['error_message'] = 'Failed to send test email. Please check your mail server configuration.';
+        }
+        
+        // Redirect back to settings page
+        header('Location: /admin/settings');
+        exit;
+    }
     /**
      * Profile page
      * 
@@ -708,3 +880,4 @@ class AdminController
         exit;
     }
 }
+
