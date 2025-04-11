@@ -181,20 +181,19 @@
                             
                             <div class="mb-3">
                                 <label for="paystack_public_key" class="form-label">Public Key</label>
-                                <input type="text" class="form-control" id="paystack_public_key" name="public_key">
+                                <input type="text" class="form-control" id="paystack_public_key" name="config[public_key]" value="pk_test_examplekeyfrompaystackdashboard">
                                 <div class="invalid-feedback">
                                     Please provide your Paystack public key.
                                 </div>
                             </div>
-                            
+
                             <div class="mb-3">
                                 <label for="paystack_secret_key" class="form-label">Secret Key</label>
-                                <input type="text" class="form-control" id="paystack_secret_key" name="secret_key">
+                                <input type="text" class="form-control" id="paystack_secret_key" name="config[secret_key]" value="sk_test_examplekeyfrompaystackdashboard">
                                 <div class="invalid-feedback">
                                     Please provide your Paystack secret key.
                                 </div>
-                            </div>
-                            
+                            </div>                            
                             <div class="mb-3">
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox" value="1" id="paystack_test_mode" name="test_mode">

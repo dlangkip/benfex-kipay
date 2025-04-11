@@ -163,7 +163,7 @@ class Application
             '/admin/profile/session-management' => ['controller' => 'AdminController', 'method' => 'sessionManagement'],
 
             // Documentation Routes
-            '/docs' => ['controller' => 'DocsController', 'method' => 'index'],
+            '/docs/' => ['controller' => 'DocsController', 'method' => 'index'],
             '/docs/api' => ['controller' => 'DocsController', 'method' => 'api'],
             '/docs/getting-started' => ['controller' => 'DocsController', 'method' => 'gettingStarted'],
             '/docs/webhooks' => ['controller' => 'DocsController', 'method' => 'webhooks'],

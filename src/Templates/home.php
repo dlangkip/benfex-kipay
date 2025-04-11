@@ -325,7 +325,7 @@
                     <ul class="list-unstyled">
                         <li class="mb-2"><a href="#features" class="text-white text-decoration-none">Features</a></li>
                         <li class="mb-2"><a href="#pricing" class="text-white text-decoration-none">Pricing</a></li>
-                        <li class="mb-2"><a href="/docs/api_reference.md" class="text-white text-decoration-none">API</a></li>
+                        <li class="mb-2"><a href="/docs/api" class="text-white text-decoration-none">API</a></li>
                         <li class="mb-2"><a href="/docs" class="text-white text-decoration-none">Documentation</a></li>
                     </ul>
                 </div>
