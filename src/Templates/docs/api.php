@@ -45,7 +45,7 @@ ob_start();
   "currency": "KSH",
   "first_name": "John",
   "last_name": "Doe",
-  "phone": "+2348012345678"
+  "phone": "+2547012345678"
 }</code></pre>
 
     <h5>Response</h5>
@@ -203,7 +203,7 @@ ob_start();
   "email": "customer@example.com",
   "first_name": "John",
   "last_name": "Doe",
-  "phone": "+2348012345678"
+  "phone": "+2547012345678"
 }</code></pre>
 
     <h5>Response</h5>
@@ -215,7 +215,7 @@ ob_start();
     "email": "customer@example.com",
     "first_name": "John",
     "last_name": "Doe",
-    "phone": "+2348012345678",
+    "phone": "+2547012345678",
     "created_at": "2025-04-10T12:34:56.000Z"
   }
 }</code></pre>
@@ -244,7 +244,7 @@ ob_start();
       "email": "customer@example.com",
       "first_name": "John",
       "last_name": "Doe",
-      "phone": "+2348012345678",
+      "phone": "+2547012345678",
       "created_at": "2025-04-10T12:34:56.000Z"
     }
   ],
